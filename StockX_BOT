@@ -1,0 +1,35 @@
+import os
+import time
+import yfinance as yf  # Import yfinance instead of pandas_datareader
+from winotify import Notification, audio
+
+tickers = ["RELIANCE.NS", "TATAMOTORS.NS"]
+
+# Define upper and lower price limits
+upper_limits = [2237, 635]
+lower_limits = [2233, 615]
+
+while True:
+    last_prices = [yf.Ticker(ticker).history(period="1d")["Close"].iloc[0] for ticker in tickers]
+    print(last_prices)
+    time.sleep(1)
+    for i in range(len(tickers)):
+        if last_prices[i] > upper_limits[i]:
+            toast = Notification(app_id="StockX Bot",
+                                 title="Price Alert for " + tickers[i],
+                                 msg=f"{tickers[i]} has reached a price of {last_prices[i]}. Alya Jaldi Vech!",
+                                 icon=os.path.join(os.getcwd(), "car.png"),
+                                 duration="long")
+            toast.add_actions(label="Go to Moneycontrol", launch="https://moneycontrol.com/")
+            toast.set_audio(audio.LoopingAlarm6, loop=True)
+            toast.show()
+        elif last_prices[i] < lower_limits[i]:
+            toast = Notification(app_id="StockX Bot",
+                                 title="Price Alert for " + tickers[i],
+                                 msg=f"{tickers[i]} has reached a price of {last_prices[i]}. Alya Jaldi Kharid!",
+                                 icon=os.path.join(os.getcwd(), "car.png"),
+                                 duration="long")
+            toast.add_actions(label="Go to Moneycontrol", launch="https://moneycontrol.com/")
+            toast.set_audio(audio.LoopingAlarm8, loop=True)
+            toast.show()
+        time.sleep(1)
